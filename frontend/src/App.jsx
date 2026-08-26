@@ -26,11 +26,18 @@ function App() {
   const streamRef = useRef(null);
   const intervalRef = useRef(null);
 
-  useEffect(() => {
+useEffect(() => {
+  function checkBackend() {
     fetch(`${API_BASE}/`)
-      .then((res) => (res.ok ? setBackendOnline(true) : setBackendOnline(false)))
+      .then((res) => setBackendOnline(res.ok))
       .catch(() => setBackendOnline(false));
-  }, []);
+  }
+
+  checkBackend(); // check immediately on load
+  const interval = setInterval(checkBackend, 15000); // then re-check every 15 seconds
+
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
     return () => stopWebcam();
